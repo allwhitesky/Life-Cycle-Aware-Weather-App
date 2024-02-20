@@ -1,12 +1,23 @@
 package edu.oregonstate.cs492.assignment2.data
 
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
 data class ForecastPeriod(
-    val year: Int,
-    val month: Int,
-    val day: Int,
-    val highTemp: Int,
-    val lowTemp: Int,
-    val pop: Double,
-    val shortDesc: String,
-    val longDesc: String
+    val main: Main,
+    val weather: List<Weather>,
+    @Json(name = "dt") val time: Int,
+    val pop: Int
+)
+
+@JsonClass(generateAdapter = true)
+data class Weather(
+    val description: String
+)
+
+@JsonClass(generateAdapter = true)
+data class Main(
+    @Json(name = "temp_min") val min: Double,
+    @Json(name = "temp_max") val max: Double,
 )

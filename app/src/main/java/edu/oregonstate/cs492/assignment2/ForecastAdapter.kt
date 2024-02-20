@@ -10,8 +10,16 @@ import edu.oregonstate.cs492.assignment2.data.ForecastPeriod
 import java.util.Calendar
 import java.util.Locale
 
-class ForecastAdapter(private val forecastPeriods: List<ForecastPeriod>) :
+class ForecastAdapter() :
     RecyclerView.Adapter<ForecastAdapter.ViewHolder>() {
+
+    private var forecastPeriods = listOf<ForecastPeriod>()
+
+    fun updateForecastList(newForecastList: List<ForecastPeriod>?) {
+        notifyItemRangeRemoved(0, forecastPeriods.size)
+        forecastPeriods = newForecastList ?: listOf()
+        notifyItemRangeInserted(0, forecastPeriods.size)
+    }
 
     override fun getItemCount() = forecastPeriods.size
 
@@ -34,29 +42,19 @@ class ForecastAdapter(private val forecastPeriods: List<ForecastPeriod>) :
         private val popTV: TextView = view.findViewById(R.id.tv_pop)
         private lateinit var currentForecastPeriod: ForecastPeriod
 
-        init {
-            view.setOnLongClickListener {
-                Snackbar.make(
-                    view,
-                    currentForecastPeriod.longDesc,
-                    Snackbar.LENGTH_LONG
-                ).show()
-                true
-            }
-        }
 
         fun bind(forecastPeriod: ForecastPeriod) {
             currentForecastPeriod = forecastPeriod
 
-            val cal = Calendar.getInstance()
-            cal.set(forecastPeriod.year, forecastPeriod.month, forecastPeriod.day)
-
-            monthTV.text = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault())
-            dayTV.text = cal.get(Calendar.DAY_OF_MONTH).toString()
-            highTempTV.text = forecastPeriod.highTemp.toString() + "°F"
-            lowTempTV.text = forecastPeriod.lowTemp.toString() + "°F"
+//            val cal = Calendar.getInstance()
+//            cal.set(forecastPeriod.year, forecastPeriod.month, forecastPeriod.day)
+//
+//            monthTV.text = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault())
+//            dayTV.text = cal.get(Calendar.DAY_OF_MONTH).toString()
+            highTempTV.text = forecastPeriod.main.max.toString() + "°F"
+            lowTempTV.text = forecastPeriod.main.min.toString() + "°F"
             popTV.text = (forecastPeriod.pop * 100.0).toInt().toString() + "% precip."
-            shortDescTV.text = forecastPeriod.shortDesc
+            shortDescTV.text = forecastPeriod.weather[0].description
         }
     }
 }
