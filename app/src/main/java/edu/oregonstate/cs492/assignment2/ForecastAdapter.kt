@@ -9,6 +9,8 @@ import com.google.android.material.snackbar.Snackbar
 import edu.oregonstate.cs492.assignment2.data.ForecastPeriod
 import java.util.Calendar
 import java.util.Locale
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ForecastAdapter() :
     RecyclerView.Adapter<ForecastAdapter.ViewHolder>() {
@@ -40,21 +42,46 @@ class ForecastAdapter() :
         private val lowTempTV: TextView = view.findViewById(R.id.tv_low_temp)
         private val shortDescTV: TextView = view.findViewById(R.id.tv_short_description)
         private val popTV: TextView = view.findViewById(R.id.tv_pop)
+        private val timeTV: TextView = view.findViewById(R.id.tv_time)
         private lateinit var currentForecastPeriod: ForecastPeriod
 
 
         fun bind(forecastPeriod: ForecastPeriod) {
             currentForecastPeriod = forecastPeriod
 
-//            val cal = Calendar.getInstance()
-//            cal.set(forecastPeriod.year, forecastPeriod.month, forecastPeriod.day)
-//
-//            monthTV.text = cal.getDisplayName(Calendar.MONTH, Calendar.SHORT, Locale.getDefault())
-//            dayTV.text = cal.get(Calendar.DAY_OF_MONTH).toString()
+            // Parsing and formatting date time
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val date = dateFormat.parse(forecastPeriod.dateTime)
+
+            // Extracting month and day
+            val cal = Calendar.getInstance()
+            cal.time = date ?: Date()
+            val month = cal.get(Calendar.MONTH) + 1 // Adding 1 because months start from 0
+            val day = cal.get(Calendar.DAY_OF_MONTH)
+
+            val hour = cal.get(Calendar.HOUR)
+            val minute = cal.get(Calendar.MINUTE)
+            val amPm = if (cal.get(Calendar.AM_PM) == Calendar.AM) "AM" else "PM"
+            val timeIn12HourFormat = "${if (hour == 0) 12 else hour}:${
+                if (minute < 10) "0$minute" else minute
+            } $amPm"
+
+
+            // Displaying parsed date information
+            monthTV.text = getMonthName(month)
+            dayTV.text = day.toString()
+            timeTV.text = timeIn12HourFormat
             highTempTV.text = forecastPeriod.main.max.toString() + "°F"
             lowTempTV.text = forecastPeriod.main.min.toString() + "°F"
             popTV.text = (forecastPeriod.pop * 100.0).toInt().toString() + "% precip."
-            shortDescTV.text = forecastPeriod.weather[0].description
+            shortDescTV.text = forecastPeriod.weather[0].description.capitalize()
+        }
+        private fun getMonthName(month: Int): String {
+            val monthNames = arrayOf(
+                "Jan", "Feb", "March", "April", "May", "June",
+                "July", "Aug", "Sep", "Oct", "Nov", "Dec"
+            )
+            return monthNames[month - 1] // Adjusted to match the array index (months start from 0)
         }
     }
 }

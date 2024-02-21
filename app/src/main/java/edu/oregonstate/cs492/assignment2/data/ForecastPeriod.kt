@@ -7,8 +7,8 @@ import com.squareup.moshi.JsonClass
 data class ForecastPeriod(
     val main: Main,
     val weather: List<Weather>,
-    @Json(name = "dt") val time: Int,
-    val pop: Int
+    val pop: Double,
+    @Json(name = "dt_txt") val dateTime: String
 )
 
 @JsonClass(generateAdapter = true)

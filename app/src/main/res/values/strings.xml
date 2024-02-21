@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Assignment 2</string>
+
+    <string name="api_error">
+      Error fetching API results: %1$s
+    </string>
 </resources>

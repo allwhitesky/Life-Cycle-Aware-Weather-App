@@ -6,17 +6,17 @@ import retrofit2.http.Query;
 
 import retrofit2.Retrofit;
 import retrofit2.Response;
-import retrofit2.converter.scalars.ScalarsConverterFactory
+import retrofit2.converter.moshi.MoshiConverterFactory
 
 interface ForecastService {
 
     @GET("data/2.5/forecast")
-    fun searchForecast(
+    suspend fun searchForecast(
         @Query("lat") lat: String,
         @Query("lon") lon: String,
-        @Query("unit") unit: String = "imperial",
-        @Query("appid") appid: String = "69c61140a703c038ddb9c5366eaa5849"
-    ): Call<String>
+        @Query("appid") appid: String = "69c61140a703c038ddb9c5366eaa5849",
+        @Query("units") unit: String = "imperial"
+    ): Response<ForecastSearchResults>
 
     companion object {
         private const val BASE_URL = "https://api.openweathermap.org/"
@@ -24,7 +24,7 @@ interface ForecastService {
         fun create(): ForecastService {
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create())
                 .build()
                 .create(ForecastService::class.java)
         }
